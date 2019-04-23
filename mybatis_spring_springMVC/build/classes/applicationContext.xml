@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+<!-- 该spring容器的配置文件专门用来： spring整合Mybatis主配置文件 -->
+
+<!-- 读取config.properties文件 -->
+	<util:properties id="config" location="classpath:config.properties" />
+	
+	<!-- 数据源 -->
+	<bean id="dbs" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="#{config.driver}" />
+		<property name="url" value="#{config.url}" />
+		<property name="username" value="#{config.username}" />
+		<property name="password" value="#{config.password}" />
+	</bean>
+
+<!-- 配置SqlSessionFactory,为整合应用提供SqlSession对象 -->
+	<bean id="ssfb" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="bds" /><!-- 告诉数据源 -->
+		<property name="mapperLocations" value="classpath:TUserMapper.xml"  /><!-- 告诉映射文件位置 -->
+	</bean>
+
+<!-- 扫描mapper接口 -->	
+	<bean id="" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 将sqlsession对象交由mapper扫描器，生产mapper接口对应的bean实例 -->
+		<property name="sqlSessionFactory" ref="ssfb" />
+		<property name="basePackage" value="com.zqy.dao" /><!-- 到哪里扫描mapper接口 -->
+	</bean>
+
+</beans>
